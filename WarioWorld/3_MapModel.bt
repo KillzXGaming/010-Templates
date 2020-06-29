@@ -20,6 +20,8 @@ struct UnknownSection;
 struct UnknownSection2;
 struct UnknownSection3;
 
+BigEndian();
+
 struct Header
 {
     uint positionsOffset;
@@ -77,8 +79,6 @@ struct Header
 
 }header <bgcolor=0xCDE6FF>;
 
-// ---- Dicts ----
-
 typedef struct
 {
     uint offset;
@@ -89,8 +89,6 @@ typedef struct
     local uint pos <format=hex> = FTell();
 
     FSeek(offset * 4);
-  //  byte displayList[size];
-
     while (FTell() < offset * 4 + size)
     {
          byte opCode <hidden=true>;

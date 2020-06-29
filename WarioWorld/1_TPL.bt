@@ -18,6 +18,8 @@ struct PaletteHeader;
 
 Header header;
 
+BigEndian();
+
 typedef struct
 {
     uint identifier;

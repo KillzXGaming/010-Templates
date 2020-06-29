@@ -23,7 +23,10 @@ typedef struct // Header
 {
 byte headerBytesp[2];
 byte fileIds[0x1E];
-FileEntry fileEntry[60] <optimize=false>;
+while(!FEof())
+{
+	FileEntry fileEntry;
+}
 
 }HEADER <bgcolor=0xEFCDFF>;
 

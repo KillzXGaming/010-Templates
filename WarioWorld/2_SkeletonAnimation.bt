@@ -18,6 +18,8 @@ struct KeyData;
 struct Animation;
 struct Track;
 
+BigEndian();
+
 struct Header
 {
     uint boneCount;

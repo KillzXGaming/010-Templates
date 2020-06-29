@@ -13,6 +13,8 @@
 struct File{
 struct DrawElement;
 
+BigEndian();
+
 struct Header
 {
     uint positionsOffset;
