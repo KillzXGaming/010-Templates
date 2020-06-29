@@ -1,0 +1,148 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+
+struct KeyData;
+struct JointData;
+struct Group;
+struct JointKeyCounters;
+struct TrackInfo;
+struct KeyFrame;
+struct KeyFrameF32;
+
+struct Header
+{
+    byte Version;
+    byte Loop;
+    short unk;
+    uint keyCount;
+    uint scaleKeysOffset;
+    uint rotationKeysOffset;
+    uint translationKeysOffset;
+    uint trackInfoOffset;
+
+   JointKeyCounters keyCounters[3];
+
+   FSeek(translationKeysOffset);
+   float pos[4];
+
+   local int i = 0;
+   for (i = 0; i < 3; i++)
+   {
+      // JointData JointAnims;
+   }
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    KeyData PositionX(keyCounters[i].PosX,2);
+    KeyData PositionY(keyCounters[i].PosY,2);
+    KeyData PositionZ(keyCounters[i].PosZ,2);
+
+    KeyData RotateX(keyCounters[i].RotX,1);
+    KeyData RotateY(keyCounters[i].RotY,1);
+    KeyData RotateZ(keyCounters[i].RotZ,1);
+
+    KeyData ScaleX(keyCounters[i].ScaX,0);
+    KeyData ScaleY(keyCounters[i].ScaY,0);
+    KeyData ScaleZ(keyCounters[i].ScaZ,0);
+} JointData;
+
+typedef struct(TrackInfo track, int type)
+{
+local uint pos = FTell();
+
+if (type == 1)
+{
+    FSeek(rotationKeysOffset + (track.Index * 2)); 
+    if (count > 1)
+        KeyFrame value[track.Count];
+    else
+        ushort value;
+}
+
+if (type == 0)
+{
+    FSeek(scaleKeysOffset + (track.Index * 4)); 
+    if (count > 1)
+        KeyFrameF32 value[track.Count];
+    else
+        float value;
+}
+
+if (type == 2)
+{
+    FSeek(translationKeysOffset + (track.Index * 4)); 
+    if (count > 1)
+        KeyFrameF32 value[track.Count];
+    else
+        float value;
+}
+
+FSeek(pos); 
+} KeyData;
+
+typedef struct
+{
+ float frame;
+ float value;
+ float slope;
+} KeyFrameF32;
+
+typedef struct
+{
+ ushort frame;
+ ushort value;
+ ushort slope;
+} KeyFrame;
+
+//This is a list of data used for keying
+//The key data gets the index first then 
+//loops through the counter in JointKeyCounters
+typedef struct
+{
+   TrackInfo ScaX;
+   TrackInfo ScaY;
+   TrackInfo ScaZ;
+   TrackInfo RotX;
+   TrackInfo RotY;
+   TrackInfo RotZ;
+   TrackInfo PosX;
+   TrackInfo PosY;
+   TrackInfo PosZ;
+} JointKeyCounters;
+
+//The start indexes the data
+typedef struct
+{
+   ushort Count;
+   ushort Index;
+   ushort Flag;
+} TrackInfo;
+
+typedef struct // FileChunk
+{
+   ushort unk[1];
+} Group;
+
+}file;
+
+void FAlign(byte alignment)
+{
+	local int bytesToSkip <hidden=true> = (-FTell() % alignment + alignment) % alignment;
+	while (bytesToSkip--)
+	{
+		byte padding <fgcolor=0x808080, hidden=true>;
+	}
+}

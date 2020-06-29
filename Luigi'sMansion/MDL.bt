@@ -1,0 +1,300 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct File{
+
+struct Node;
+struct Weight;
+struct WeightCountTable;
+struct JointTable;
+struct ShapePacket;
+struct DrawElement;
+struct Material;
+struct Shape;
+struct TextureObject;
+struct Texture;
+struct TevStage;
+struct PacketData;
+struct Vertex;
+struct LODVertex;
+struct LODPacketData;
+
+struct Header
+{
+    BigEndian();
+    uint Magic;
+    ushort FaceCount;
+    ushort Padding;
+    ushort NodeCount;
+    ushort ShapePacketCount;
+    ushort WeightMatrixCount;
+    ushort JointCount;
+    ushort VertexCount;
+    ushort NormalCount;
+    ushort ColorCount;
+    ushort TexcoordCount;
+    ushort Padding2;
+    ushort Padding3;
+    ushort Padding4;
+    ushort Padding5;
+    ushort TextureCount;
+    ushort Padding6;
+    ushort TextureObjectCount;
+    ushort DrawElementsCount;
+    ushort MaterialCount;
+    ushort ShapeCount;
+    uint Padding7;
+    uint NodeOffset;
+    uint ShapePacketOffset;
+    uint MatrixOffset;
+    uint WeightOffset;
+    uint JointIndexOffset;
+    uint WeightCountTableOffset;
+    uint VertexOffset;
+    uint NormalOffset;
+    uint ColorOffset;
+    uint TexcoordOffset;
+    uint Padding8;
+    uint Padding9;
+    uint TextureOffset;
+    uint Padding10;
+    uint MaterialOffset;
+    uint TextureObjectOffset;
+    uint ShapeOffset;
+    uint DrawElementOffset;
+    uint Padding11;
+    uint Padding12;
+
+    FSeek(MaterialOffset);
+    Material material[MaterialCount]<optimize=false>;
+    
+    FSeek(TextureObjectOffset);
+    TextureObject textureObject[TextureObjectCount]<optimize=false>;
+
+    FSeek(ShapeOffset);
+    Shape shapes[ShapeCount];
+
+    FSeek(DrawElementOffset);
+    DrawElement drawElement[DrawElementsCount];
+   
+    FSeek(ShapePacketOffset);
+    ShapePacket packets(0)[ShapePacketCount]<optimize=false>;
+    ShapePacket LODpackets(1)[ShapePacketCount]<optimize=false>;
+      
+    FSeek(TextureOffset);
+    uint textureOffsets[TextureCount];
+    local int t = 0;
+    for (t = 0; t < TextureCount; t++)
+    {
+        FSeek(textureOffsets[t]);
+        Texture textures;
+    }
+   if (VertexCount != 0)
+   {
+       FSeek(VertexOffset);
+       Vector3F Positions[VertexCount];
+   }
+   if (NormalCount != 0)
+   {
+       FSeek(NormalOffset);
+       Vector3F Normals[NormalCount];
+   }
+   if (TexcoordCount != 0)
+   {
+       FSeek(TexcoordOffset);
+       Vector2F TexxCoords[TexcoordCount];
+   }
+   if (ColorCount != 0)
+   {
+       FSeek(ColorOffset);
+       Vector4B Colors[ColorCount];
+   }
+
+    FSeek(NodeOffset);
+    Node nodes[NodeCount];
+
+   FSeek(MatrixOffset);
+   Matrix3x4 matrix[JointCount];
+
+   FSeek(WeightCountTableOffset);
+   byte weightCount[WeightMatrixCount];
+
+   local int i = 0;
+   local int j = 0;
+
+   FSeek(WeightOffset);
+   for (i = 0; i < WeightMatrixCount; i++)
+   {
+       for (j = 0; j < weightCount[i]; j++){
+             float weights;
+       }
+   }
+
+   FSeek(JointIndexOffset);
+   for (i = 0; i < WeightMatrixCount; i++)
+   {
+       for (j = 0; j < weightCount[i]; j++){
+             ushort index;
+       }
+   }
+
+}header <bgcolor=0xCDE6FF>;
+
+
+typedef struct
+{
+     ushort matIndex;
+     ushort shapeIndex;
+} DrawElement;
+
+typedef struct
+{
+  byte color[4];
+  ushort unk;
+  byte unk2;
+  byte numTevStages;
+  byte unk3;
+  byte paddings[23];
+  TevStage Stages[8];
+} Material; 
+
+typedef struct
+{
+   ushort unk;
+  ushort TextureObjIndex;
+  float unks[7];
+} TevStage; 
+
+typedef struct
+{
+    ushort TextureIndex;
+    ushort Padding;
+    byte Unknown1;
+    byte Unknown2;
+    byte Unknown3;
+    byte Padding2;  
+
+} TextureObject;
+
+typedef struct
+{
+    byte format;
+    byte padding;
+    ushort Width;
+    ushort Height;
+    byte paddings[26];
+  //  byte ImageData[Width * Height];
+} Texture;
+
+typedef struct
+{
+    ubyte Unknown0;
+    byte Unknown1;
+    ubyte Unknown2;
+    byte Unknown3;
+    ushort PacketCount;
+    ushort PacketBeginIndex;
+} Shape;
+
+
+typedef struct
+{
+ushort NodeIndex;
+ushort ChildIndex;
+ushort SiblingIndex;
+ushort Unknown3;
+ushort ShapeCount;
+ushort ShapeIndex;
+uint padding;
+} Node;
+
+typedef struct(int lod)
+{
+   uint offset;
+   uint size;
+   ushort unk;
+   ushort numIndices;
+   ushort indices[10];
+
+    local uint pos = FTell();
+    
+    FSeek(offset);
+    while (FTell() < offset + size)
+    {
+         byte opCode <hidden=true>;
+         if (opCode == 0)
+             continue;
+
+        if (lod == 1)
+            LODPacketData lodPacketData;
+        else
+            PacketData packetData;
+    }
+
+    FSeek(pos);
+} ShapePacket;
+
+typedef struct
+{
+    ushort numVertices;
+    Vertex vertices[numVertices]<optimize=false>;
+} PacketData;
+
+typedef struct
+{
+    ushort numVertices;
+    LODVertex vertices[numVertices]<optimize=false>;
+} LODPacketData;
+
+typedef struct
+{
+byte MatrixIndex;
+byte Tex0MatrixIndex;
+byte Tex1MatrixIndex;
+ushort PositionIndex;
+if (NormalCount != 0)
+    ushort NormalIndex;
+    ushort B;
+    ushort T;
+if (ColorCount != 0)
+    ushort ColorIndex;
+if (TexcoordCount != 0)
+    ushort TexCoordIndex;
+} Vertex;
+
+typedef struct
+{
+byte MatrixIndex;
+ushort PositionIndex;
+if (NormalCount != 0)
+    ubyte NormalIndex;
+} LODVertex;
+
+typedef struct // Weight
+{
+   float weights;
+} Weight;
+
+typedef struct // Weight
+{
+    byte weightCount;
+} WeightCountTable;
+
+typedef struct
+{
+    ushort indives[2];
+} JointTable;
+
+}file;

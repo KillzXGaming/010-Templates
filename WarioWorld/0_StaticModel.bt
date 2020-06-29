@@ -1,0 +1,117 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct PacketEntry;
+struct ShapeEntry;
+struct DrawElement;
+struct DrawList;
+struct Vertex;
+
+BigEndian();
+
+struct Header
+{
+    uint positionsOffset;
+    uint normalsOffset;
+    uint colorsOffset;
+    uint texCoordsOffset;
+    uint unknownOffset2;
+    uint textureContainerOffset;
+    uint drawElementCount;
+    uint drawElementsOffset;
+    uint shapeCount;
+    uint shapesOffset;
+    uint packetCount;
+    uint packetsOffset;
+
+    FSeek(unknownOffset2 * 4);
+     byte unk2;
+
+    FSeek(textureContainerOffset * 4);
+    byte textureData[576];
+
+    FSeek(drawElementsOffset * 4);
+    DrawElement elements[drawElementCount];
+
+    FSeek(shapesOffset * 4);
+    ShapeEntry shapes[shapeCount];
+
+    FSeek(packetsOffset * 4);
+    PacketEntry packets[packetCount] <optimize=false>;
+}header <bgcolor=0xCDE6FF>;
+
+// ---- Dicts ----
+
+typedef struct
+{
+    uint offset;
+    uint size;
+    uint flags;
+
+    local uint pos <format=hex> = FTell();
+
+    FSeek(offset * 4);
+ //   byte displayList[size];
+    while (FTell() < offset * 4 + size)
+    {
+         byte opCode <hidden=true>;
+         if (opCode == 0)
+             continue;
+
+        DrawList drawList;
+    }
+
+    FSeek(pos);
+} PacketEntry ;
+
+typedef struct
+{
+    uint packetCount;
+    uint packetOffset;
+} ShapeEntry ;
+
+typedef struct
+{
+    uint packetCount;
+    uint packetOffset;
+} DrawElement;
+
+typedef struct
+{
+    ushort numVertices;
+    Vertex vertices[numVertices]<optimize=false>;
+    
+} DrawList;
+
+typedef struct
+{
+    ushort PositionIndex;
+    ushort NormalIndex;
+    ushort ColorIndex;
+    ushort TexCoordIndex;
+
+    local uint pos <format=hex> = FTell();
+
+    FSeek((positionsOffset * 4) + (PositionIndex * 6));
+    short positions[3];
+
+    FSeek((normalsOffset * 4) + (NormalIndex * 6));
+    short normals[3];
+
+    FSeek((texCoordsOffset * 4) + (TexCoordIndex * 2));
+    byte texCoords[2];
+
+    FSeek(pos);
+} Vertex;
+
+}file;

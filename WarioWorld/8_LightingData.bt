@@ -1,0 +1,58 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct Color;
+struct Light;
+struct Fog;
+
+struct Header
+{
+    uint fogOffset;
+    uint ambientColorOffset;
+    uint numLights;
+    uint lightsOffset;
+
+    FSeek(ambientColorOffset * 4);
+    Color ambientColor;
+ 
+    FSeek(fogOffset * 4);
+    Fog fog;
+ 
+    FSeek(lightsOffset * 4);
+    Light lights[numLights]<optimize=false>;
+ 
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+   uint unknown;
+   float start;
+   float end;
+   Color color;
+} Fog;
+
+typedef struct
+{
+   ubyte R;
+   ubyte G;
+   ubyte B;
+   ubyte A;
+} Color;
+
+typedef struct
+{
+   float values[12];
+   Color color;
+} Light;
+
+}file;

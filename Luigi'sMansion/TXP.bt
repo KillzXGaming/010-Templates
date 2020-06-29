@@ -1,0 +1,41 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct Entry;
+
+struct Header
+{
+   ushort unk;
+   ushort unk;
+   ushort numEntries;
+   ushort frameCount;
+   uint frameOffset;
+
+   Entry entries[numEntries] <optimize=false>;
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+   ushort unk;
+   ushort materialIndex;
+   uint unk;
+   uint indicesOffset;
+
+   local uint pos = FTell();
+
+    FSeek(indicesOffset);
+   ushort indices[frameCount];
+
+    FSeek(pos);
+} Entry;

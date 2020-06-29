@@ -1,0 +1,46 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct Object;
+struct Group;
+
+struct Header
+{
+    uint groupCount;
+    uint groupOffset;
+
+   FSeek(groupOffset * 4);
+   Group groups[groupCount]<optimize=false>;
+ 
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    uint objectCount;
+    uint objectOffset;
+
+    local uint pos <format=hex> = FTell();
+    
+   FSeek(objectOffset * 4);
+   Object objects[objectCount]<optimize=false>;
+
+   FSeek(pos);
+} Group;
+
+typedef struct
+{
+   float values[12];
+   ushort unks[8];
+} Object;
+
+}file;

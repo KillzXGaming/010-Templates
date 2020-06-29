@@ -1,0 +1,85 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct File{
+
+struct KeyData;
+struct JointData;
+struct Group;
+struct JointKeyCounters;
+struct JointKeyStartInidces;
+struct KeyFrame;
+struct KeyFrameF32;
+
+struct Header
+{
+   uint padding[1];
+   ushort FrameCount;
+   ushort Flags;
+   ushort ShapeCount; 
+   FSeek(16); //padding
+   uint offsets[4];
+
+   FSeek(offsets[0]);
+   float blendValues[(offsets[1] - offsets[0]) / 4];
+
+   FSeek(offsets[1]);
+   uint blendIndices[(offsets[2] - offsets[1]) / 4];
+
+   FSeek(offsets[2]);
+   ushort blendCounters[(offsets[3] - offsets[2]) / 2];
+
+   //Indexes the blend indices and determines which to use per shape
+   FSeek(offsets[3]);
+   ushort shapeIndices[ShapeCount];
+
+}header <bgcolor=0xCDE6FF>;
+
+
+typedef struct
+{
+ float frame;
+ float value;
+ float slope;
+} KeyFrameF32;
+
+typedef struct
+{
+ ushort frame;
+ ushort value;
+ ushort slope;
+} KeyFrame;
+
+//This is a list of data used for keying
+//The key data gets the index first then 
+//loops through the counter in JointKeyCounters
+typedef struct
+{
+   ushort Value[5];
+} JointKeyCounters;
+
+//The start indexes the data
+typedef struct
+{
+   Group Value[5];
+} JointKeyStartInidces;
+
+typedef struct // FileChunk
+{
+   ushort FrameCount;
+   ushort Index;
+} Group;
+
+}file;

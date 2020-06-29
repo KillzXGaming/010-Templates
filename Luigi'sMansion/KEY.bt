@@ -1,0 +1,156 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+
+struct KeyData;
+struct JointData;
+struct Group;
+struct JointKeyCounters;
+struct JointKeyStartInidces;
+struct KeyFrame;
+struct KeyFrameF32;
+
+struct Header
+{
+   uint jointCount;
+   ushort unkCount;
+   ushort frameCount; //Need to test this. Probably not right
+   uint flags; //Looping and other data
+   uint scaleKeysOffset;
+   uint rotationKeysOffset;
+   uint translationKeysOffset;
+   uint keyIndicesOffset;
+   uint keyCounterOffset;
+
+   FSeek(keyIndicesOffset);
+   JointKeyStartInidces keyInfos[jointCount];
+
+   FSeek(keyCounterOffset);
+   JointKeyCounters keyCounters[jointCount];
+
+   local int i = 0;
+   for (i = 0; i < jointCount; i++)
+   {
+       JointData JointAnims;
+   }
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    KeyData PositionX(keyCounters[i].PosX,2, keyInfos[i].PosX);
+    KeyData PositionY(keyCounters[i].PosY,2, keyInfos[i].PosY);
+    KeyData PositionZ(keyCounters[i].PosZ,2, keyInfos[i].PosZ);
+
+    KeyData RotateX(keyCounters[i].RotX,1, keyInfos[i].RotX);
+    KeyData RotateY(keyCounters[i].RotY,1, keyInfos[i].RotY);
+    KeyData RotateZ(keyCounters[i].RotZ,1, keyInfos[i].RotZ);
+
+    KeyData ScaleX(keyCounters[i].ScaX,0, keyInfos[i].ScaX);
+    KeyData ScaleY(keyCounters[i].ScaY,0, keyInfos[i].ScaY);
+    KeyData ScaleZ(keyCounters[i].ScaZ,0, keyInfos[i].ScaZ);
+} JointData;
+
+typedef struct(int count, int type, int beginIndex)
+{
+local uint pos = FTell();
+
+if (type == 1)
+{
+    FSeek(rotationKeysOffset + (beginIndex * 2)); 
+    if (count > 1)
+        KeyFrame value[count];
+    else
+        ushort value;
+}
+
+if (type == 0)
+{
+    FSeek(scaleKeysOffset + (beginIndex * 4)); 
+    if (count > 1)
+        KeyFrameF32 value[count];
+    else
+        float value;
+}
+
+if (type == 2)
+{
+    FSeek(translationKeysOffset + (beginIndex * 4)); 
+    if (count > 1)
+        KeyFrameF32 value[count];
+    else
+        float value;
+}
+
+FSeek(pos); 
+} KeyData;
+
+typedef struct
+{
+ float frame;
+ float value;
+ float slope;
+} KeyFrameF32;
+
+typedef struct
+{
+ ushort frame;
+ ushort value;
+ ushort slope;
+} KeyFrame;
+
+//This is a list of data used for keying
+//The key data gets the index first then 
+//loops through the counter in JointKeyCounters
+typedef struct
+{
+   ushort ScaX;
+   ushort ScaY;
+   ushort ScaZ;
+   ushort RotX;
+   ushort RotY;
+   ushort RotZ;
+   ushort PosX;
+   ushort PosY;
+   ushort PosZ;
+} JointKeyCounters;
+
+//The start indexes the data
+typedef struct
+{
+   uint ScaX;
+   uint ScaY;
+   uint ScaZ;
+   uint RotX;
+   uint RotY;
+   uint RotZ;
+   uint PosX;
+   uint PosY;
+   uint PosZ;
+} JointKeyStartInidces;
+
+typedef struct // FileChunk
+{
+   ushort unk[1];
+} Group;
+
+}file;
+
+void FAlign(byte alignment)
+{
+	local int bytesToSkip <hidden=true> = (-FTell() % alignment + alignment) % alignment;
+	while (bytesToSkip--)
+	{
+		byte padding <fgcolor=0x808080, hidden=true>;
+	}
+}

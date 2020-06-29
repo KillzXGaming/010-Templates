@@ -1,0 +1,73 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct Group;
+struct KeyFrame;
+struct KeyFrameC;
+struct UnknownSection;
+
+struct Header
+{
+    ushort frameCount;
+    ushort UNL;
+    Group PositionX;
+    Group PositionY;
+    Group PositionZ;
+    Group UnkownGroup1;
+    Group UnkownGroup2;
+    Group UnkownGroup3;
+
+    uint KeyDataOffset;
+    uint UnknownOffset;
+
+    FSeek(UnknownOffset);
+    uint unkCount;
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    ushort keyCount;
+    ushort startIndex;
+    ushort elementCount;
+
+	local uint pos <format=hex> = FTell();
+
+    FSeek(48 + (startIndex * 4));
+    if (elementCount == 1)
+       KeyFrameC keyFrames[keyCount];
+    else
+       KeyFrame keyFrames[keyCount];
+
+	FSeek(pos);
+} Group;
+
+typedef struct
+{
+   float frame;
+   float value;
+   float slope;
+} KeyFrame;
+
+typedef struct
+{
+   float value;
+} KeyFrameC;
+
+
+typedef struct
+{
+  ushort test[2];
+} UnknownSection;

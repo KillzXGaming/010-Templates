@@ -1,0 +1,76 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct Object;
+struct Group1;
+struct Group2;
+struct Group3;
+struct Vector3;
+
+struct Header
+{
+    uint unk; //Always 0xFFFFFFFF
+    uint unkCount;
+    uint unkOffset;
+    uint unk2Count;
+    uint unk2Offset;
+    uint unk3Count;
+    uint unk3Offset;
+    uint unk4Count;
+    uint unk4Offset;
+
+   FSeek(unkOffset * 4);
+   Group1 group1s[unkCount]<optimize=false>;
+ 
+   FSeek(unk2Offset * 4);
+   Group2 group2s[unk2Count]<optimize=false>;
+ 
+   FSeek(unk3Offset * 4);
+   Group3 group3s[unk3Count]<optimize=false>;
+
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+   float unk;
+   Vector3 position;
+   uint index;
+} Group1;
+
+typedef struct
+{
+   uint unk;
+   uint unk;
+   ushort group3Index1;
+   ushort unk;
+   ushort unk;
+   ushort group3Index2;
+} Group2;
+
+typedef struct
+{
+   uint type; //1 == player spawn
+   Vector3 Position1;
+   Vector3 Position2;
+} Group3;
+
+typedef struct
+{
+   float X;
+   float Y;
+   float Z;
+} Vector3;
+
+
+}file;

@@ -1,0 +1,111 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct File{
+
+struct KeyData;
+struct ShapeInfo;
+struct BlendInfo;
+struct IndexData;
+struct IndexData8;
+struct Vertex;
+
+struct Header
+{
+   uint padding[2];
+   ushort shapeCount;
+   ushort groupCount; //Need to test this. Probably not right
+   uint hash; //Looping and other data
+   uint offsets[8];
+
+   FSeek(offsets[0]);
+   ShapeInfo shapes[shapeCount];
+
+   FSeek(offsets[1]);
+   BlendInfo values[groupCount];
+
+   FSeek(offsets[2]);
+  // Vector3F Positions[(offsets[3] - offsets[2]) / 12];
+
+   FSeek(offsets[3]);
+   Vector3F Normal[(offsets[4] - offsets[3]) / 12];
+
+   local int i = 0;
+   for (i = 0; i < groupCount; i++)
+   {
+        FSeek(offsets[4] + (values[i].positionIndex * 2));
+        IndexData positionIndices(values[i].positionCount);
+
+      // FSeek(offsets[4] + (values[i].normalIndex));
+      // IndexData8 normalIndices(values[i].normalCount);
+   }
+
+   FSeek(offsets[6]);
+   ushort blendInfoIndices[(offsets[7] - offsets[6]) / 2];
+
+   FSeek(offsets[7]);
+   ushort values8[(FileSize() - offsets[7]) / 2];
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct(ushort size)
+{
+   Vertex vertices[size] <optimize=false>;
+} IndexData;
+
+typedef struct
+{
+    ushort data;
+    local ushort positionIndex = data & 0xff;
+
+   local uint pos <format=hex> = FTell();
+   FSeek(offsets[2] + positionIndex * 12);
+   Vector3F value;
+   FSeek(pos);
+} Vertex;
+
+typedef struct(ushort size)
+{
+    local uint pos <format=hex> = FTell();
+
+   local int v = 0;
+   for (v = 0; v < groupCount; v++)
+   {
+       ushort data;
+       local int positionIndex = data >> 4;
+   }
+
+    FSeek(pos);
+} IndexData8;
+
+typedef struct
+{
+    ushort positionCount; 
+    ushort positionIndex; 
+    ushort normalCount; 
+    ushort normalIndex;
+} BlendInfo;
+
+typedef struct // FileChunk
+{
+    ushort index;
+    uint blendInfoIndex;
+    uint unk; 
+    uint unk; 
+    uint bufferCount;  //1
+    ushort bufferSize; 
+} ShapeInfo;
+
+}file;

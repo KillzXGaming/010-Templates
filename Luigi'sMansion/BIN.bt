@@ -1,0 +1,203 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: KillzXGaming
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct File{
+struct TextureInfo;
+struct Sampler;
+struct SceneGraph;
+struct SceneGraphPart;
+struct Material;
+struct Batch;
+struct Vertex;
+struct PacketData;
+
+BigEndian();
+
+struct Header
+{
+    byte version;
+    char name[0x0B];
+    uint texturesOffset;    
+    uint samplerOffset;    
+    uint positionsOffset;    
+    uint normalsOffset;   
+    uint color0;    
+    uint color1;    
+    uint texCoords0Offset;    
+    uint texCoords1Offset;    
+    uint texCoords2Offset;    
+    uint texCoords2Offset;
+    uint materialsOffset;
+    uint batchOffset;    
+    uint sceneGraphOffset;    
+
+    FSeek(positionsOffset);
+  //  byte positionData[normalsOffset - positionsOffset];
+
+    FSeek(normalsOffset);
+ //   byte normalData[texCoords0Offset - normalsOffset];
+
+    FSeek(texCoords0Offset);
+//    byte texcoordData[materialsOffset - texCoords0Offset];
+
+    FSeek(sceneGraphOffset);
+    SceneGraph sceneGraph(0);
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct(int index)
+{
+    local uint pos <format=hex> = FTell();
+    
+    FSeek(texturesOffset + (0xC * index));
+    
+    ushort width;
+    ushort height;
+    byte format;
+    byte unk;
+    ushort padding;
+    uint imageDataOffset;
+    
+    FSeek(texturesOffset + imageDataOffset);
+    byte imageData[width * height];
+    
+    FSeek(pos);
+} TextureInfo<bgcolor=0xCDE6FF>;
+
+typedef struct(int index)
+{
+    local uint pos <format=hex> = FTell();
+    
+    FSeek(samplerOffset + (0x14 * index));
+    ushort textureIndex ;
+    byte wrapS;
+    byte wrapU;
+
+    TextureInfo texture(textureIndex);
+
+   FSeek(pos);
+} Sampler<bgcolor=0xCDE6FF>;
+
+typedef struct(int index)
+{
+    local uint pos <format=hex> = FTell();
+    
+    FSeek(batchOffset + (0x18  * index));
+    ushort triangleCount ;
+    ushort displayListSize;
+    uint attributes;
+    byte bumpMap ;
+    byte cullMode ;
+    byte texGenCount ;
+    byte nbt3 ;
+    uint dataOffset;
+    byte padding[8];
+
+    if (triangleCount > 0)
+    {
+    FSeek(batchOffset + dataOffset);
+
+   /* while (FTell() < batchOffset + dataOffset + (displayListSize * 0x20))
+    {
+         byte opCode <hidden=true>;
+         if (opCode == 0)
+             continue;
+
+        PacketData packetData;
+    }*/
+    }
+   FSeek(pos);
+} Batch<bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    ushort numVertices;
+    Vertex vertices[numVertices]<optimize=false>;
+    
+} PacketData;
+
+typedef struct
+{
+    ushort PositionIndex;
+    ushort NormalIndex;
+    ushort TexCoordIndex;
+} Vertex;
+
+typedef struct(int index)
+{
+    local uint pos <format=hex> = FTell();
+    
+    FSeek(materialsOffset + (0x28  * index));
+    byte unk;
+    byte unk;
+    byte unk;
+    byte ambientColor[4];
+    byte unk;
+    short textureIndices[8];
+    short unk;
+    short unk;
+    byte padding[12];
+
+    local int i = 0; 
+    for (i = 0; i < 8; i++)
+    {
+         if(textureIndices[i] != -1)
+            Sampler sampler(textureIndices[i]);
+    }
+   FSeek(pos);
+} Material<bgcolor=0xCDE6FF>;
+
+typedef struct(int index)
+{
+    FSeek(sceneGraphOffset + (0x8C  * index));
+
+    local uint startpos <format=hex> = FTell();
+    
+    short parentIndex;
+    short firstChildIndex;
+    short nextSiblingIndex;
+    short prevSiblingIndex;
+    byte flags;
+    byte padding[3];
+    Vector3F scale;
+    Vector3F rotation;
+    Vector3F translation;
+    Vector3F boundingMin;
+    Vector3F boundingMax;
+    float unk;
+    ushort partCount;
+    ushort padding2;
+    uint partsOffset;
+
+    FSeek(sceneGraphOffset + partsOffset);
+
+    SceneGraphPart drawElements[partCount]<optimize=false>;
+
+   if (firstChildIndex  >= 0)
+       SceneGraph sceneGraph(firstChildIndex);
+   if (nextSiblingIndex  >= 0)
+       SceneGraph sceneGraph(nextSiblingIndex);
+ 
+} SceneGraph<bgcolor=0xCDE6FF>;
+
+typedef struct
+{ short materialIndex;
+    short batchIndex;
+
+    Material material(materialIndex);
+    Batch batch(batchIndex);
+} SceneGraphPart<bgcolor=0xCDE6FF>;
+
+}file;

@@ -1,0 +1,43 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct Sprite;
+struct Point;
+
+struct Header
+{
+   uint count;
+   Sprite entries[count] <optimize=false>;
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+   short FadeSpriteBoneIndex;
+   short GlowSpriteBoneIndex;
+   byte color[4];
+   Point points[4];
+   Vector2F TexCoords[4]; //Unused? Can't see a difference on edits but they look like texcoords
+   float FadeIntensityGlowSprite;
+   float RelativePositionX;
+   float RelativePositionY;
+
+} Sprite;
+
+typedef struct
+{
+   Vector2F pos;
+   uint padding; //0 on every geb file
+} Point;

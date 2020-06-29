@@ -1,0 +1,196 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct PacketEntry;
+struct ShapeEntry;
+struct DrawElement;
+struct DrawList;
+struct Vertex;
+struct UnknownSection;
+struct UnknownSection2;
+struct UnknownSection3;
+
+struct Header
+{
+    uint positionsOffset;
+    uint normalsOffset;
+    uint vertexColorsOffset;
+    uint texCoordsOffset;
+    uint textureContainerOffset;
+
+    uint unkOffset6;
+    uint unkOffset7;
+    uint shapeCount;
+    uint shapesOffset;
+    uint packetCount;
+    uint packetsOffset;
+    uint unk4Count;
+    uint unkOffset10;
+    uint unk5Count;
+    uint unkOffset11;
+
+
+    FSeek(positionsOffset * 4);
+     byte pos;
+
+    FSeek(normalsOffset * 4);
+     byte nrm;
+
+    FSeek(vertexColorsOffset * 4);
+    byte col;
+
+    FSeek(texCoordsOffset * 4);
+     byte texCoords;
+
+    FSeek(textureContainerOffset * 4);
+     byte textures[22];
+
+    FSeek(unkOffset6* 4);
+    uint unks2[11];
+ //   UnknownSection unknownSection;
+
+    FSeek(unkOffset7* 4);
+    float unks[11];
+
+    FSeek(shapesOffset* 4);
+    ShapeEntry shapes[shapeCount] <optimize=false>;
+
+    FSeek(packetsOffset* 4);
+  //  PacketEntry packets[packetCount] <optimize=false>;
+
+    FSeek(unkOffset10* 4);
+     short unks10[unk4Count];
+
+
+    FSeek(unkOffset11* 4);
+   //  uint unk2;
+
+}header <bgcolor=0xCDE6FF>;
+
+// ---- Dicts ----
+
+typedef struct
+{
+    uint offset;
+    uint size;
+    ushort flags1;
+    ushort flags2;
+
+    local uint pos <format=hex> = FTell();
+
+    FSeek(offset * 4);
+  //  byte displayList[size];
+
+    while (FTell() < offset * 4 + size)
+    {
+         byte opCode <hidden=true>;
+         if (opCode == 0)
+             continue;
+
+        DrawList drawList;
+    }
+
+    FSeek(pos);
+} PacketEntry ;
+
+typedef struct
+{
+    ushort unk;
+    ushort packetCount;
+    uint packetOffset;
+
+    local uint pos <format=hex> = FTell();
+
+ //    FSeek(matOffset1 * 4);
+ //    byte diffuse[4];
+ //    float unk;
+
+
+    FSeek(packetOffset* 4);
+    PacketEntry packet[packetCount]<optimize=false>;
+
+    FSeek(pos);
+} ShapeEntry ;
+
+typedef struct
+{
+ushort unk;
+UnknownSection2 unknownSection[5] <optimize=false>;
+UnknownSection3 unknownSection2[8] <optimize=false>;
+
+    //uint count;
+ //   ushort unk;
+//    UnknownSection2 unknownSection;
+ //   UnknownSection2 unknownSections[count] <optimize=false>;
+//    UnknownSection3 unknownSections[4] <optimize=false>;
+
+} UnknownSection;
+
+typedef struct
+{
+    ushort count;
+    ushort values[count];
+
+} UnknownSection2;
+
+typedef struct
+{
+    ushort unk;
+    ushort count;
+    ushort values[count];
+    ushort count2;
+    ushort values2[count2];
+
+} UnknownSection3;
+
+typedef struct
+{
+    uint packetCount;
+    uint packetOffset;
+} DrawElement;
+
+typedef struct
+{
+    ushort numVertices;
+    Vertex vertices[numVertices]<optimize=false>;
+    
+} DrawList;
+
+typedef struct
+{
+    ushort PositionIndex;
+    ushort NormalIndex;
+    ushort ColorIndex;
+    ushort TexCoordIndex;
+
+    local uint pos <format=hex> = FTell();
+
+    FSeek((positionsOffset * 4) + (PositionIndex * 12));
+    float positions[3];
+
+    FSeek((normalsOffset * 4) + (NormalIndex * 6));
+    short normals[3];
+
+    FSeek((texCoordsOffset * 4) + (TexCoordIndex * 4));
+    short texCoords[2];
+
+    if (vertexColorsOffset != 0)
+    {
+        FSeek((vertexColorsOffset * 4) + (ColorIndex * 2));
+        short value;
+    }
+
+    FSeek(pos);
+} Vertex;
+
+}file;

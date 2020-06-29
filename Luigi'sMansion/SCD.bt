@@ -1,0 +1,97 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.1 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct IndexEntry;
+struct ObjectEntry;
+struct Group;
+struct KeyFrame1;
+struct KeyFrame3;
+struct KeyFrame4;
+
+struct Header
+{
+   ushort frameCount;
+   ushort unk;
+   ushort numEntries;
+   ushort unk;
+   uint unkOffset;
+   uint unkOffset2;
+   uint objectsOffset;
+   uint unkOffset3;
+   uint dataOffset;
+   uint indicesOffset;
+
+   FSeek(unkOffset);
+   float data;
+   Group Groups[10]<optimize=false>;
+
+   FSeek(objectsOffset);
+   ObjectEntry objects[numEntries]<optimize=false>;
+
+   FSeek(indicesOffset);
+   ushort test[10];
+
+  // Entry entries[numEntries] <optimize=false>;
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+   char Name[0x10];
+   ushort ObjectType;
+   ushort unk;
+   Group Groups[14];
+} ObjectEntry;
+
+typedef struct
+{
+   ushort keyCount;
+   ushort beginIndex;
+   ushort elementCount;
+
+   local uint pos <format=hex> = FTell();
+   FSeek(dataOffset + (beginIndex * elementCount));
+    if (elementCount == 1)
+        KeyFrame1 keyFrames[keyCount]<optimize=false>;
+   else if (elementCount == 3)
+        KeyFrame3 keyFrames[keyCount]<optimize=false>;
+    else
+        KeyFrame4 keyFrames[keyCount]<optimize=false>;
+
+   FSeek(pos);
+} Group;
+
+typedef struct
+{
+ float frame;
+ float value;
+ float slope;
+ float slope2;
+} KeyFrame4;
+
+typedef struct
+{
+ float frame;
+ float value;
+ float slope;
+} KeyFrame3;
+
+typedef struct
+{
+ float value;
+} KeyFrame1;
+
+typedef struct
+{
+
+} IndexEntry;

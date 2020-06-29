@@ -1,0 +1,76 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct DrawElement;
+
+struct Header
+{
+    uint positionsOffset;
+    uint normalsOffset;
+    uint groupCount;
+    uint groupOffset;
+
+    FSeek(groupOffset* 4);
+    ushort numValues;
+    ushort numValues2;
+
+    FSeek(positionsOffset * 4);
+
+    FSeek(normalsOffset * 4);
+    DrawElement root;
+    DrawElement values2[numValues2];
+
+    //ShapeEntry shapes[groupCount];
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    uint type;
+    uint dataOffset;
+
+   local uint pos <format=hex> = FTell();
+    
+    FSeek(dataOffset * 4);
+    if (type == 1)
+    {
+        uint childCount;
+        uint childOffset;
+
+        FSeek(childOffset * 4);
+        DrawElement element[childCount];
+    }
+    else if (type == 12)
+    {
+        uint unk1;
+        uint unk2;
+
+
+        FSeek(unk1 * 4);
+        float unk;
+        float unk;
+
+        FSeek(unk2 * 4);
+        float unk;
+        float unk;
+
+    }
+    else
+    {
+        float unk ;
+        float unk ;
+    }
+   FSeek(pos);
+} DrawElement;
+
+}file;

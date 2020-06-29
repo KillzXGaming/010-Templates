@@ -1,0 +1,81 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+
+struct Group;
+struct TrackInfo;
+struct KeyFrame1;
+struct KeyFrame3;
+struct KeyFrame4;
+struct LightEntry;
+
+struct Header
+{
+    ushort frameCount;
+    ushort count;
+    uint unk;
+    uint unk;
+    uint lightEntryOffset;
+
+    FSeek(lightEntryOffset);
+    LightEntry lights[count];
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    ushort keyCount;
+    ushort startIndex;
+    ushort elementCount;
+
+	local uint pos <format=hex> = FTell();
+
+    FSeek(68 + (startIndex * 4));
+    if (elementCount == 1)
+       KeyFrame1 keyFrames[keyCount];
+    else if (elementCount == 4)
+       KeyFrame4 keyFrames[keyCount];
+    else
+       KeyFrame3 keyFrames[keyCount];
+
+	FSeek(pos);
+} Group;
+
+
+typedef struct
+{
+   ushort Type;
+   ushort Distance;
+   ushort Brightness;
+   ushort padding;
+} LightEntry;
+
+typedef struct
+{
+   float frame;
+   float value;
+   float slope;
+} KeyFrame3;
+
+typedef struct
+{
+   float value;
+} KeyFrame1;
+
+typedef struct
+{
+   float frame;
+   float value;
+   float slope;
+   float slope2;
+} KeyFrame4;
+}file;

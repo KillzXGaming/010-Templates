@@ -1,0 +1,91 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct File{
+struct IndexGroup;
+struct AnimGroup;
+struct KeyData;
+struct Animation;
+struct Track;
+
+struct Header
+{
+    uint groupCount;
+    uint numAnimationGroups;
+    uint animationGroupsOffset;
+
+    FSeek(animationGroupsOffset * 4);
+    uint offsets[numAnimationGroups];
+
+    local int i = 0;
+    for (i = 0; i < numAnimationGroups; i++)
+    {  
+        FSeek(offsets[i] * 4);
+        Animation animation;
+    }
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct
+{
+    float frameCount;
+    uint offset;
+
+    FSeek(offset * 4);
+    AnimGroup animGroups[groupCount] <optimize=false>;
+} Animation;
+
+typedef struct
+{
+     Track track1;
+     Track track2;
+     Track track3;
+
+     Track track4;
+     Track track5;
+     Track track6;
+
+     Track track7;
+     Track track8;
+     Track track9;
+} AnimGroup;
+
+typedef struct
+{
+     uint offset;
+     uint lastFrameOffset;
+
+    if (lastFrameOffset > 0)
+    {
+        local uint pos <format=hex> = FTell();
+
+        local uint startPos = offset * 4;
+        local uint endPos = lastFrameOffset * 4 + 12;
+
+        local uint frameCount = (endPos - startPos) / 12;
+
+        FSeek(offset * 4);
+        KeyData keys[frameCount];
+
+        FSeek(pos);
+    }
+} Track;
+
+
+typedef struct
+{
+    float frame;
+    float value;
+    float slope;
+} KeyData;
+
+}file;

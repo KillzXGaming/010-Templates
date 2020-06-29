@@ -1,0 +1,57 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+struct Header;
+struct ImageTable;
+struct ImageHeader;
+struct PaletteHeader;
+
+Header header;
+
+typedef struct
+{
+    uint identifier;
+    uint numImages;
+    uint imageTableOffset;
+    FSeek(imageTableOffset);
+    ImageTable imageTable[numImages];
+}Header;
+
+typedef struct
+{
+    uint imageHeaderOffset;
+    uint paletteOffset;
+}ImageTable;
+
+typedef struct
+{
+    ushort Height;
+    ushort Width;
+    uint Format;
+    uint ImageDataOffset;
+    uint WrapS;
+    uint WrapT;
+    uint MinFilter;
+    uint MagFilter;
+    float LODBias;
+    byte EdgeLODEnable;
+    byte MinLOD;
+    byte MaxLOD;
+    byte Unpacked;
+
+}ImageHeader;
+
+typedef struct
+{
+
+}PaletteHeader;

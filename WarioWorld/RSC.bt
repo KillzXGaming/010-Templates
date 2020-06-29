@@ -1,0 +1,49 @@
+//------------------------------------------------
+//--- 010 Editor v7.0.2 Binary Template
+//
+//      File: 
+//   Authors: 
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+struct HEADER;
+struct FileEntry;
+struct TextureContainer;
+struct TextureEntry;
+struct ResourcePointer;
+
+BigEndian();
+HEADER file <open=true>;
+
+typedef struct // Header
+{
+byte headerBytesp[2];
+byte fileIds[0x1E];
+FileEntry fileEntry[60] <optimize=false>;
+
+}HEADER <bgcolor=0xEFCDFF>;
+
+typedef struct
+{
+   uint type;
+   uint size;
+   uint nextoffset;
+   byte padding[20];
+   byte data[size];
+
+   if (nextoffset != 0) {
+       FSeek(nextoffset);
+   }
+}FileEntry <bgcolor=0xEEDDEF>;
+
+
+typedef struct
+{
+   uint offset;
+   uint unk;
+}ResourcePointer <bgcolor=0xEEDDEF>;
+
