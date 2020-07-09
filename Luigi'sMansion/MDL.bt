@@ -200,7 +200,7 @@ typedef struct
 
 typedef struct
 {
-    ubyte Unknown0;
+    ubyte NormalsFlags;
     byte Unknown1;
     ubyte Unknown2;
     byte Unknown3;
@@ -266,8 +266,6 @@ byte Tex1MatrixIndex;
 ushort PositionIndex;
 if (NormalCount != 0)
     ushort NormalIndex;
-    ushort B;
-    ushort T;
 if (ColorCount != 0)
     ushort ColorIndex;
 if (TexcoordCount != 0)
