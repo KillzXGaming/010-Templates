@@ -33,9 +33,9 @@ struct Header
 
     Group Unknown;
     Group FieldOfView;
-    Group Unknown2;
-    Group Unknown3;
-    float unk; //1.18
+    Group ZNear;
+    Group ZFar;
+    float Unknown2; //1.18
  
 }header <bgcolor=0xCDE6FF>;
 
