@@ -45,7 +45,7 @@ typedef struct
     ushort startIndex;
     ushort elementCount;
 
-	local uint pos <format=hex> = FTell();
+    local uint pos <format=hex> = FTell();
 
     FSeek(68 + (startIndex * 4));
     if (elementCount == 1)
@@ -55,7 +55,7 @@ typedef struct
     else
        KeyFrame3 keyFrames[keyCount];
 
-	FSeek(pos);
+    FSeek(pos);
 } Group;
 
 typedef struct
