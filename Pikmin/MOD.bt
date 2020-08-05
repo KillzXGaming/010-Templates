@@ -157,6 +157,11 @@ typedef struct // HashEntry
 			byte padding[0x10];
 			Joint joints[count] <optimize=false>;
 			break;
+	    case OP_JointName:
+			uint count;
+			byte padding[0x14];
+			string jointNames[count] <optimize=false>;
+			break;
 	    case OP_EndOfFile:
 			EndOfFile = 1;
 			break;
