@@ -33,9 +33,9 @@ struct Header
 
     Group Unknown;
     Group FieldOfView;
-    Group Unknown2;
-    Group Unknown3;
-    float unk; //1.18
+    Group ZNear;
+    Group ZFar;
+    float Unknown2; //1.18
  
 }header <bgcolor=0xCDE6FF>;
 
@@ -45,7 +45,7 @@ typedef struct
     ushort startIndex;
     ushort elementCount;
 
-	local uint pos <format=hex> = FTell();
+    local uint pos <format=hex> = FTell();
 
     FSeek(68 + (startIndex * 4));
     if (elementCount == 1)
@@ -55,7 +55,7 @@ typedef struct
     else
        KeyFrame3 keyFrames[keyCount];
 
-	FSeek(pos);
+    FSeek(pos);
 } Group;
 
 typedef struct
