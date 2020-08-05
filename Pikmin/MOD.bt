@@ -15,6 +15,7 @@
 
 struct File{
 struct SectionEntry;
+struct NBTEntry;
 struct MaterialList;
 struct Material;
 struct Envelope;
@@ -105,6 +106,11 @@ typedef struct // HashEntry
 			byte padding[0x14];
 			Vector3F normals[count];
 			break;
+	    case OP_VertexNBT:
+			uint count;
+			byte padding[0x14];
+			NBTEntry nbt[count];
+			break;
 	    case OP_VertexColor:
 			uint count;
 			byte padding[0x14];
@@ -170,6 +176,12 @@ typedef struct // HashEntry
     FSeek(sectionSize + origin + 8);
 } SectionEntry <read=SectionRead>;
 
+typedef struct
+{
+    Vector3F Normal;
+    Vector3F Binormal;
+    Vector3F Tangent;
+} NBTEntry;
 
 typedef struct
 {
