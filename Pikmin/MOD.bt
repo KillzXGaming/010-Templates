@@ -304,12 +304,12 @@ typedef struct
 {
      int ParentIndex;
      uint flags;
-     float BoundingBoxMin[3];
-     float BoundingBoxMax[3];
+     Vector3F BoundingBoxMin;
+     Vector3F BoundingBoxMax;
      float VolumeRadius;
-     float Scale[3];
-     float Rotation[3];
-     float Position[3];
+     Vector3F Scale;
+     Vector3F Rotation;
+     Vector3F Position;
      uint numMatPolys;
 	 MatPoly matPolys[numMatPolys];
 
