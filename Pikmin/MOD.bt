@@ -19,6 +19,7 @@ struct NBTEntry;
 struct MaterialList;
 struct Material;
 struct Envelope;
+struct Weight;
 struct MeshList;
 struct Mesh;
 struct Packet;
@@ -272,9 +273,14 @@ typedef struct
 typedef struct
 {
     ushort count;
-    float weights[count];
-    ushort indices[count];
+	Weight weights[count];
 } Envelope;
+
+typedef struct
+{
+	ushort index; //Indexes the skinning indices (opcode 0x40)
+	float weight;
+} Weight;
 
 typedef struct
 {
