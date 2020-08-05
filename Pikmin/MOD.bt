@@ -1,0 +1,331 @@
+//------------------------------------------------
+//--- 010 Editor v9.0.2 Binary Template
+//
+//      File: 
+//   Authors: KillzXGaming
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: *.mod
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#include "math.bt"
+
+struct File{
+struct SectionEntry;
+struct MaterialList;
+struct Material;
+struct Envelope;
+struct MeshList;
+struct Mesh;
+struct Packet;
+struct DisplayList;
+struct Joint;
+struct MatPoly;
+struct MaterialColorSection;
+struct Texture;
+struct TextureAttribute;
+struct MaterialLighting;
+struct UnknownMaterialSection;
+struct UnknownMaterialSection2;
+struct UnknownMaterialSection3;
+struct UnknownMaterialSection4;
+
+struct Header
+{
+local int EndOfFile = 0;
+while(!FEof() && EndOfFile != 1)
+{
+    SectionEntry entry;
+}
+
+}header <bgcolor=0xCDE6FF>;
+
+typedef struct // HashEntry
+{
+    local uint origin <format=hex> = FTell();
+
+	enum <uint> OpCode
+	{
+        OP_Header = 0x000,
+
+        OP_VertexPosition = 0x0010,
+        OP_VertexNormal = 0x0011,
+        OP_VertexNBT = 0x0012,
+        OP_VertexColor = 0x0013,
+
+        OP_VertexUV0 = 0x0018,
+        OP_VertexUV1 = 0x0019,
+        OP_VertexUV2 = 0x001A,
+        OP_VertexUV3 = 0x001B,
+        OP_VertexUV4 = 0x001C,
+        OP_VertexUV5 = 0x001D,
+        OP_VertexUV6 = 0x001E,
+        OP_VertexUV7 = 0x001F,
+
+        OP_Texture = 0x0020,
+        OP_TextureAttribute = 0x0022,
+        OP_Material = 0x0030,
+
+        OP_SkinningIndices = 0x0040,
+
+        OP_Envelope = 0x0041,
+
+        OP_Mesh = 0x0050,
+
+        OP_Joint = 0x0060,
+        OP_JointName = 0x0061,
+
+        OP_CollisionPrism = 0x0100,
+        OP_CollisionGrid = 0x0110,
+
+        OP_EndOfFile = 0xFFFF
+	} opcode;
+	
+    uint sectionSize;
+	
+	switch (opcode)
+	{
+	    case OP_Header:
+			byte padding[0x18];
+			ushort Year;
+			byte Month;
+			byte Day;
+			int SystemFlags;
+			break;
+	    case OP_VertexPosition:
+			uint count;
+			byte padding[0x14];
+			Vector3F positions[count];
+			break;
+	    case OP_VertexNormal:
+			uint count;
+			byte padding[0x14];
+			Vector3F normals[count];
+			break;
+	    case OP_VertexColor:
+			uint count;
+			byte padding[0x14];
+			Vector4UB colors[count];
+			break;
+	    case OP_VertexUV0:
+	    case OP_VertexUV1:
+	    case OP_VertexUV2:
+	    case OP_VertexUV3:
+	    case OP_VertexUV4:
+	    case OP_VertexUV5:
+	    case OP_VertexUV6:
+	    case OP_VertexUV7:
+			uint count;
+			byte padding[0x14];
+			Vector2F texCoords[count];
+			break;
+	    case OP_TextureAttribute:
+			uint count;
+			byte padding[0x14];
+			TextureAttribute textureAttribute[count] <optimize=false>;
+			break;
+	    case OP_SkinningIndices:
+			uint count;
+			byte padding[0x14];
+			//Rigid indices go first.
+			//If index == 0xFFFF, envelope indices start
+			//Subtract 0xFFFF - index to get envelope index.
+			ushort indices[count] <optimize=false>;
+			break;
+	    case OP_Material:
+			MaterialList materialList;
+			break;
+	    case OP_Texture:
+			uint count;
+			byte padding[0x14];
+			//Texture texture; //Does not parse image data sizes atm
+			break;
+	    case OP_Envelope:
+			uint count;
+			byte padding[0x14];
+			Envelope envelopes[count] <optimize=false>;
+			break;
+	    case OP_Mesh:
+			MeshList meshList;
+			break;
+	    case OP_Joint:
+			uint count;
+			uint flags;
+			byte padding[0x10];
+			Joint joints[count] <optimize=false>;
+			break;
+	    case OP_EndOfFile:
+			EndOfFile = 1;
+			break;
+	}
+
+    FSeek(sectionSize + origin + 8);
+} SectionEntry <read=SectionRead>;
+
+
+typedef struct
+{
+    uint matCount;
+    uint lightCount;
+    byte padding[0x10];
+	MaterialLighting lighting[lightCount] <optimize=false>;
+    Material materials[matCount]  <optimize=false>;
+} MaterialList;
+
+typedef struct
+{
+    ushort unk1;
+    byte TextureAlphaFlags;
+    byte flags;
+    ushort unk2;
+    ushort textureIndex;
+    byte diffuseColor[4];
+	
+	if (flags == 1) //Data related to tev stages
+	{
+	     byte unks[64];
+	     uint unkCount;
+	     uint padding;
+		 UnknownMaterialSection4 section4[unkCount];
+	}
+} Material;
+
+typedef struct
+{
+   MaterialColorSection materialColors[3];
+   byte unks[16];
+   uint unkSectionCount;
+   UnknownMaterialSection unknownSections[unkSectionCount];
+} MaterialLighting;
+
+typedef struct
+{
+   ushort color[4];
+   uint unk;
+   float value;
+   uint unk;
+   uint unk;
+} MaterialColorSection;
+
+typedef struct
+{
+   byte unknowns[32];
+} UnknownMaterialSection;
+
+typedef struct
+{
+   byte unknowns[32];
+} UnknownMaterialSection2;
+
+typedef struct
+{
+   uint unk;
+   uint unk;
+   uint count;
+} UnknownMaterialSection3;
+
+typedef struct
+{
+   byte unk[68];
+} UnknownMaterialSection4;
+
+typedef struct
+{
+    ushort Index;
+	ushort unk;
+	byte WrapS;
+	byte WrapT;
+	ushort unk;
+	uint unk;
+} TextureAttribute;
+
+typedef struct
+{
+    ushort Width;
+    ushort Height;
+    ushort Unknown;
+    ushort ImageFormat;
+    uint Unknown;
+    FAlign(0x20);
+} Texture;
+
+typedef struct
+{
+    ushort count;
+    float weights[count];
+    ushort indices[count];
+} Envelope;
+
+typedef struct
+{
+     uint numMeshes;
+	 FAlign(0x20);
+	 Mesh mesh[numMeshes] <optimize=false>;
+} MeshList;
+
+typedef struct
+{
+     uint boneIndex;
+     uint vtxDescriptor;
+     uint numPackets;
+	 Packet packets[numPackets] <optimize=false>;
+} Mesh;
+
+typedef struct
+{
+     uint numMatrices;
+	 short indices[numMatrices];
+     uint numDisplayLists;
+	 DisplayList displayList[numDisplayLists] <optimize=false>;
+} Packet;
+
+typedef struct
+{
+     byte flags[3];
+	 
+	enum <byte> CullMode
+	{
+        Display_Front = 0,
+        Display_Back = 1,
+        Display_Both = 2,
+        Display_None = 3,
+	} cullMode;
+	 
+     uint unk1;
+     uint dlsize;
+	 FAlign(0x20);
+	 byte data[dlsize] <optimize=false>;
+} DisplayList;
+
+typedef struct
+{
+     int ParentIndex;
+     uint flags;
+     float BoundingBoxMin[3];
+     float BoundingBoxMax[3];
+     float VolumeRadius;
+     float Scale[3];
+     float Rotation[3];
+     float Position[3];
+     uint numMatPolys;
+	 MatPoly matPolys[numMatPolys];
+
+} Joint;
+
+typedef struct
+{
+     short MatIndex;
+     short MeshIndex;
+} MatPoly;
+
+}file;
+
+string SectionRead(SectionEntry &sectionEntry)
+{
+	string s;
+	SPrintf(s, "Section: %s", EnumToString(sectionEntry.opcode));
+	return s;
+}

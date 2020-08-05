@@ -90,8 +90,8 @@ struct Header
     DrawElement drawElement[DrawElementsCount];
    
     FSeek(ShapePacketOffset);
-    ShapePacket packets(0)[ShapePacketCount]<optimize=false>;
-    ShapePacket LODpackets(1)[ShapePacketCount]<optimize=false>;
+  //  ShapePacket packets(0)[ShapePacketCount]<optimize=false>;
+ //   ShapePacket LODpackets(1)[ShapePacketCount]<optimize=false>;
       
     FSeek(TextureOffset);
     uint textureOffsets[TextureCount];
